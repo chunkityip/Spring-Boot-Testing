@@ -1,15 +1,47 @@
 package com.programming.techie.springredditclone.service;
 
+
 import com.programming.techie.springredditclone.exceptions.SpringRedditException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.junit.Assert.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CommentServiceTest {
 
+    private CommentService commentService;
 
+    @BeforeEach
+    void setUp() {
+        // Given : initializing objects
+        commentService = new CommentService(null , null , null ,
+                null , null , null, null
+                );
+    }
+
+    @Test
+    @DisplayName("This test should pass since there is no swear word")
+
+    public void notContainsSwearWords() {
+        // When : perform the operation
+        boolean message = commentService.containsSwearWords("Hi , it is CK");
+
+        // Then : test the result
+        assertFalse(message);
+    }
+
+    @Test
+    @DisplayName("This test should pass since there has swear word")
+    public void didContainsSwearWords() {
+
+        // When
+        SpringRedditException exception = assertThrows(SpringRedditException.class , () ->
+    commentService.containsSwearWords("shit"));
+
+        // Then
+        assertTrue(exception.getMessage().contains("Comments contains unacceptable language"));
+    }
 }
 
 
