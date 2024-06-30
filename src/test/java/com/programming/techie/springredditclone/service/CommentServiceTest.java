@@ -14,7 +14,7 @@ class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Given : initializing objects
+        // Given: test init
         commentService = new CommentService(null , null , null ,
                 null , null , null, null
                 );
@@ -24,10 +24,10 @@ class CommentServiceTest {
     @DisplayName("This test should pass since there is no swear word")
 
     public void notContainsSwearWords() {
-        // When : perform the operation
+        // When: operation
         boolean message = commentService.containsSwearWords("Hi , it is CK");
 
-        // Then : test the result
+        // Then: result
         assertFalse(message);
     }
 
