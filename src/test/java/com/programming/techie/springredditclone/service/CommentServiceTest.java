@@ -11,36 +11,33 @@ import static org.junit.Assert.*;
 class CommentServiceTest {
 
     private CommentService commentService;
-
     @BeforeEach
     void setUp() {
-        // Given: test init
-        commentService = new CommentService(null , null , null ,
-                null , null , null, null
-                );
+        //Given - init
+        commentService = new CommentService(null ,
+                null , null , null ,
+                null, null , null);
     }
 
+
     @Test
-    @DisplayName("This test should pass since there is no swear word")
+    @DisplayName("This test should pass since it didn't contains any swear word")
+    public void containsSwearWordsHappyTest() {
+        //When - operation
+        boolean message = commentService.containsSwearWords("Hi , it is Ck");
 
-    public void notContainsSwearWords() {
-        // When: operation
-        boolean message = commentService.containsSwearWords("Hi , it is CK");
-
-        // Then: result
         assertFalse(message);
     }
 
     @Test
-    @DisplayName("This test should pass since there has swear word")
-    public void didContainsSwearWords() {
+    @DisplayName("This test should pass since it will throw the exception that I want")
+    public void containsSwearWordsUnHappyTest() {
+        //When - operation
 
-        // When
-        SpringRedditException exception = assertThrows(SpringRedditException.class , () ->
-    commentService.containsSwearWords("shit"));
+        SpringRedditException springRedditException = assertThrows(SpringRedditException.class ,
+                () -> commentService.containsSwearWords("shit"));
 
-        // Then
-        assertTrue(exception.getMessage().contains("Comments contains unacceptable language"));
+        assertTrue(springRedditException.getMessage().contains("unacceptable"));
     }
 }
 

@@ -30,15 +30,19 @@ import static java.util.Collections.emptyList;
 class PostServiceTest {
 
     @Mock
-    private PostRepository postRepository;
+    PostRepository postRepository;
+
     @Mock
-    private SubredditRepository subredditRepository;
+    SubredditRepository subredditRepository;
+
     @Mock
-    private UserRepository userRepository;
+    UserRepository userRepository;
+
     @Mock
-    private AuthService authService;
+    AuthService authService;
+
     @Mock
-    private PostMapper postMapper;
+    PostMapper postMapper;
 
     /*
     When unit testing full-stack applications with Mockito, creating both entity and DTO objects in your tests is a good practice. It ensures that:
@@ -48,7 +52,7 @@ class PostServiceTest {
      */
 
     @Test
-    @DisplayName("It should wokr base on the dummy deat Id by using findById()")
+    @DisplayName("It should work base on the dummy Id by using findById()")
     public void getPostTesting() {
         // Given: Test Init
 
@@ -68,21 +72,26 @@ class PostServiceTest {
         // Since we need DTO to let the data sent to the client, we better to test DTO as well
         // DTO: Represents the data structure transferred over the network or API
         PostResponse expectedPostResponse = new PostResponse(123L, "First Post", "http://url.site", "Test",
-                "Test User", "Test Subredit", 0, 0, "1 Hour Ago", false, false);
+                "Test User", "Test Subreddit", 0, 0, "1 Hour Ago", false, false);
 
         /*
+
         Full-stack applications often have services that depend on repositories (for database operations)
         and mappers (for entity-to-DTO conversion).
 
-        So we need to use postRepository to test model as an entity, and we need to user postMapper to test DTO
+        So we need to use postRepository to test model as an entity,
+        and we need to user postMapper to test DTO by using entity
 
          */
+
         // Using Optional in unit tests since it is a good practice to avoid NullPointerExceptions
         Mockito.when(postRepository.findById(123L)).thenReturn(Optional.of(post));
         Mockito.when(postMapper.mapToDto(post)).thenReturn(expectedPostResponse);
 
-        // When: operation
-        // Testing the getPost method by using postID inject by post-object at line 65
+        // When: operation , call the method we like to test
+        // Testing the getPost method by using postID inject by post-object at line 69
+        // Whenever we like to ensure operation correctly transforms an entity to a DTO ,
+        // we need to create response object in your test
         PostResponse actualPostResponse = postService.getPost(123L);
 
         // Then: result
