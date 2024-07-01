@@ -44,6 +44,10 @@ class PostServiceTest {
     @Mock
     PostMapper postMapper;
 
+    // We are using @Captor to create argument captor at field level
+    @Captor
+    private ArgumentCaptor<Post> postArgumentCaptor;
+
     /*
     When unit testing full-stack applications with Mockito, creating both entity and DTO objects in your tests is a good practice. It ensures that:
             - The data transformation logic between entities and DTOs is properly tested.
@@ -100,4 +104,43 @@ class PostServiceTest {
         Assertions.assertThat(actualPostResponse.getPostName()).isEqualTo(expectedPostResponse.getPostName());
     }
 
+    @Test
+    @DisplayName("It should work")
+    public void saveTest() {
+        // When
+        PostService postService = new PostService(postRepository ,
+                subredditRepository ,
+                userRepository ,
+                authService ,
+                postMapper);
+
+        // We need to init dummy user object to create Subreddit object
+        User currentUser = new User(123L, "test user", "secret password", "user@email.com", Instant.now(), true);
+        Subreddit subreddit = new Subreddit(123L, "First Subreddit", "Subreddit Description", emptyList(), Instant.now(), currentUser);
+        Post post = new Post(123L, "First Post", "http://url.site", "Test",
+                0, null, Instant.now(), null);
+
+        //Represents the request DTO for creating a post
+        PostRequest postRequest = new PostRequest(null, "First Subreddit", "First Post", "http://url.site", "Test");
+
+        //We need to mock the init object. Since there have 4 , you need to mock all 4 of it
+
+        //Mock with subreddit object
+        Mockito.when(subredditRepository.findByName("First Subreddit")).thenReturn(Optional.of(subreddit));
+
+        Mockito.when(authService.getCurrentUser()).thenReturn(currentUser);
+
+        Mockito.when(postMapper.map(postRequest, subreddit, currentUser)).thenReturn(post);
+
+        Mockito.verify(postRepository, Mockito.times(1)).save(postArgumentCaptor.capture());
+
+        // When - operation
+        postService.save(postRequest);
+
+
+        // Then - result
+        Assertions.assertThat(postArgumentCaptor.getValue().getPostId()).isEqualTo(123L);
+
+        Assertions.assertThat(postArgumentCaptor.getValue().getPostName()).isEqualTo("First Post");
+    }
 }
